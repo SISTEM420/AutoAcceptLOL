@@ -1,6 +1,6 @@
-#Auto-Accept LOL
-#V. 1.1.0
-#Arturo Jorge
+#  Auto-Accept LOL
+#  V. 1.1.1
+#  Arturo Jorge
 
 import tkinter as tk
 import pyautogui as pya
@@ -8,14 +8,20 @@ from ctypes import windll
 from threading import Thread
 from pynput.mouse import Listener
 
+pick_color = False
+pick_button = False
+
 #region Set
 def set_color(x, y):
     global pos
     pos = (x, y)
+    pick_color = True
+    
 
 def set_button(x, y):
     global posclick
     posclick = (x, y)
+    pick_button = True
 
 #endregion
 
@@ -47,16 +53,24 @@ def accept_match(stop, waiting_window):
     found_color = 1591641
     
     while stop[0]:
-        pixel_color = windll.gdi32.GetPixel(hdc, pos[0], pos[1])
-        
+        if pick_color:
+            pixel_color = windll.gdi32.GetPixel(hdc, pos[0], pos[1])
+        else:
+            pixel_color = windll.gdi32.GetPixel(hdc, 1314, 126)
         if pixel_color == found_color:
-            for i in range(0, 30):
-                pya.click(posclick[0], posclick[1])
-                i += 1
-                
+            if pick_button:
+                for i in range(0, 30):
+                    pya.click(posclick[0], posclick[1])
+                    i += 1
+            else:
+                for i in range(0, 30):
+                    pya.click(955, 793)
+                    i += 1
+                            
             stop[0] = False
         else:
             pass
+    
     
     waiting_window.destroy()
 
@@ -107,7 +121,7 @@ define_color_btn.pack()
 define_place_to_click_btn = tk.Button(root, text="Definir aceptar", command=leer_click, bg="#444444", fg="white")  
 define_place_to_click_btn.pack()
 wait_btn = tk.Button(root, text="Esperar partida", command=exec_and_return, bg="#444444", fg="white")  # Start Button
-
+wait_btn.pack()
 #endregion
 
 root.mainloop()
